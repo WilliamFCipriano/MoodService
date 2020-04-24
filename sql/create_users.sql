@@ -3,7 +3,7 @@ create table users
   int_id        integer not null
     constraint users_pk
       primary key autoincrement,
-  user_id       string  not null,
+  user_name       string  not null,
   password_hash integer not null
 );
 

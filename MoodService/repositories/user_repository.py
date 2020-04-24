@@ -28,8 +28,9 @@ def create_new_user(user_name, password_hash) -> int:
     conn = _get_connection()
     cur = conn.cursor()
 
-    cur.execute("INSERT INTO users (user_id, password_hash) VALUES (?,?)",
+    cur.execute("INSERT INTO users (user_name, password_hash) VALUES (?,?)",
                 (user_name, password_hash))
+    conn.commit()
     conn.close()
 
     return cur.lastrowid

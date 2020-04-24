@@ -6,6 +6,8 @@ import MoodService.constants as constants
 
 def create_database_if_not_exists():
 
+    print('here')
+
     if path.exists(constants.database_location):
         return True
 

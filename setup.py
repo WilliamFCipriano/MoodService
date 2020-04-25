@@ -6,5 +6,4 @@ setup(name='MoodService',
       author='Will Cipriano',
       author_email='will@willcipriano.com',
       packages=['MoodService', 'MoodService.objects', 'MoodService.repositories', 'MoodService.services'],
-      include_package_data=True,
-      install_requires=['flask'])
+      install_requires=['flask', 'bcrypt'])

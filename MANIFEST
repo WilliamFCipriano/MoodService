@@ -6,6 +6,6 @@ MoodService\objects\__init__.py
 MoodService\objects\user.py
 MoodService\repositories\__init__.py
 MoodService\repositories\sqlite_util.py
-MoodService\repositories\user_repository.py
+MoodService\repositories\user.py
 MoodService\services\__init__.py
-MoodService\services\user_service.py
+MoodService\services\user.py

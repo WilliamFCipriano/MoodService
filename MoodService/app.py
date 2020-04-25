@@ -22,12 +22,16 @@ def login():
         session = session_service.create_session(user.int_id)
     except UserPasswordValidationException:
         return jsonify("Unable to validate credentials")
-    return jsonify(session)
+    return jsonify(session.__dict__)
 
 
 @app.route('/register', methods=["POST"])
 def register():
-    user_service.register_new_user(request.form["username"], request.form["password"])
+    try:
+        user_service.register_new_user(request.form["username"], request.form["password"])
+    except sqliteError as ex:
+        return jsonify("This username has already been reserved, please choose another.")
+    return jsonify("User %s has been registered successfully" % request.form["username"])
 
 
 if __name__ == '__main__':

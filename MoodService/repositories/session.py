@@ -27,7 +27,6 @@ def get_session_by_token(token: str) -> Session:
 
 def create_session(user_int_id: int, token: str) -> Session:
     """Creates a session for a given user_int_id and returns it"""
-    print('OK HERE')
     conn = _get_connection()
     cur = conn.cursor()
     cur.execute("INSERT INTO sessions (user_int_id, token) VALUES (?, ?)",

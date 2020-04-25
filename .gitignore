@@ -1,0 +1,5 @@
+MANIFEST
+moodService.db
+.tox
+.mypy_cache
+.idea

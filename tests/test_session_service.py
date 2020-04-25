@@ -13,15 +13,18 @@ def managed_database():
 
 
 def test_create_session(managed_database):
-    new_session = session_service.create_session(1,"ImAValidToken")
-    session_from_database = session_repository.get_session_by_token("ImAValidToken")
+    new_session = session_service.create_session(1)
+    session_from_database = session_repository.get_session_by_token(new_session.session_token)
 
     assert new_session.user_int_id == session_from_database.user_int_id
     assert new_session.session_id == session_from_database.session_id
+    assert new_session.session_token == session_from_database.session_token
 
 
 def test_validate_token(managed_database):
-    new_session = session_service.create_session(1,"ITooAmAValidToken")
+    new_session = session_service.create_session(2)
+    session_result = session_service.validate_token(new_session.session_token)
+    assert session_result.user_int_id == 2
 
 
 def test_validate_token_failure_case(managed_database):

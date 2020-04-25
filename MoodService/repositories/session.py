@@ -22,16 +22,17 @@ def get_session_by_token(token: str) -> Session:
     if result is None:
         raise(SessionNotFoundException)
 
-    return Session(result[1], result[0])
+    return Session(result[1], result[0], result[2])
 
 
 def create_session(user_int_id: int, token: str) -> Session:
     """Creates a session for a given user_int_id and returns it"""
+    print('OK HERE')
     conn = _get_connection()
     cur = conn.cursor()
     cur.execute("INSERT INTO sessions (user_int_id, token) VALUES (?, ?)",
                 (user_int_id, token))
+    session = Session(user_int_id, cur.lastrowid, token)
     conn.commit()
     conn.close()
-
-    return Session(user_int_id, cur.lastrowid)
+    return session

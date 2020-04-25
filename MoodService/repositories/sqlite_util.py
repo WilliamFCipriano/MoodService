@@ -5,10 +5,12 @@ import MoodService.constants as constants
 
 
 def _database_exists() -> bool:
+    """checks to see if a file exists at a certain path"""
     return path.exists(constants.database_location)
 
 
 def create_database_if_not_exists() -> None:
+    """creates a database if one does not already exist"""
     if _database_exists():
         return
 
@@ -26,5 +28,6 @@ def create_database_if_not_exists() -> None:
 
 
 def remove_database() -> None:
+    """removes the database from the disk (for unit testing purposes)"""
     if _database_exists():
         os.remove(constants.database_location)

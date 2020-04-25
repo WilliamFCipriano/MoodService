@@ -9,7 +9,7 @@ def _get_connection():
     return sqlite3.connect(constants.database_location)
 
 
-def get_session_by_token(token) -> Session:
+def get_session_by_token(token: str) -> Session:
     """Returns a session objects for any given token, raises
     SessionNotFoundException when the session does not exist"""
     conn = _get_connection()
@@ -20,13 +20,13 @@ def get_session_by_token(token) -> Session:
     conn.close()
 
     if result is None:
-        raise(SessionNotFoundException,
-              "Session was not located for that token")
+        raise(SessionNotFoundException)
 
     return Session(result[1], result[0])
 
 
-def create_session(user_int_id, token) -> Session:
+def create_session(user_int_id: int, token: str) -> Session:
+    """Creates a session for a given user_int_id and returns it"""
     conn = _get_connection()
     cur = conn.cursor()
     cur.execute("INSERT INTO sessions (user_int_id, token) VALUES (?, ?)",

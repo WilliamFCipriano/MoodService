@@ -27,4 +27,6 @@ create table sessions
 	token string not null
 );""","""
 create unique index sessions_session_id_uindex
-	on sessions (session_id);"""]
+	on sessions (session_id);""","""
+	create unique index sessions_token_uindex
+	on sessions (token);"""]

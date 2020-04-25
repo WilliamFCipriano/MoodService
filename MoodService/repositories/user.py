@@ -9,7 +9,7 @@ def _get_connection():
     return sqlite3.connect(constants.database_location)
 
 
-def get_user_by_id(user_name) -> User:
+def get_user_by_id(user_name: str) -> User:
     """Returns a user object from the database by id"""
     conn = _get_connection()
     cur = conn.cursor()
@@ -23,7 +23,7 @@ def get_user_by_id(user_name) -> User:
         return User(result[0], result[1], result[2])
 
 
-def create_new_user(user_name, password_hash) -> int:
+def create_new_user(user_name: str, password_hash: str) -> int:
     """Returns the int_id (primary key) of a newly created user"""
     conn = _get_connection()
     cur = conn.cursor()

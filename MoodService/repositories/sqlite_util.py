@@ -10,7 +10,7 @@ def _database_exists() -> bool:
 
 def create_database_if_not_exists() -> None:
     if _database_exists():
-        return True
+        return
 
     conn = sqlite3.connect(constants.database_location)
     cur = conn.cursor()

@@ -29,10 +29,15 @@ def login():
 def register():
     try:
         user_service.register_new_user(request.form["username"], request.form["password"])
-    except sqliteError as ex:
+    except sqliteError:
         return jsonify("This username has already been reserved, please choose another.")
     return jsonify("User %s has been registered successfully" % request.form["username"])
 
 
 if __name__ == '__main__':
     app.run()
+
+
+def init_db():
+    database_util.remove_database()
+    database_util.create_database_if_not_exists()

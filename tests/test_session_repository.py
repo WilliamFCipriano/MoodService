@@ -2,7 +2,6 @@ from MoodService.repositories import session as session_repository
 import pytest
 import MoodService.repositories.sqlite_util as database_util
 
-
 @pytest.fixture(scope="module")
 def managed_database():
     database_util.create_database_if_not_exists()

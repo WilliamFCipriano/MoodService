@@ -23,12 +23,15 @@ def mood():
             return jsonify("You must login first to submit your mood"), 401
 
         try:
-            mood_streak_percentage = mood_report_service.create_new_mood_report(session.user_int_id, request.form["mood"])
+            mood_streak_total = mood_report_service.create_new_mood_report(session.user_int_id, request.form["mood"])
         except MoodAlreadySubmittedException:
             return jsonify("You have already submitted a mood today"), 403
 
-        if mood_streak_percentage > 50:
-            return jsonify("Mood submitted successfully, you are in the top ? percent of users!", mood_streak_percentage)
+        mood_streak_percentile = mood_report_service.get_streak_percentile(mood_streak_total)
+
+        if mood_streak_percentile >= 50:
+            return jsonify("Mood submitted successfully, you are in the top %s percent of users!"
+                           % mood_streak_percentile)
         else:
             return jsonify("Mood submitted successfully, see you again tomorrow!")
 

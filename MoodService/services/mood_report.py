@@ -1,7 +1,7 @@
 import MoodService.repositories.mood_report as mood_report_repository
 import MoodService.repositories.user as user_repository
+from MoodService.exceptions.mood_report import PercentileMatrixNotInitializedException
 import math
-from MoodService.objects.mood_report import MoodReport
 
 
 def percent_range(start,stop, step=0.01):
@@ -16,6 +16,10 @@ def create_new_mood_report(user_id, mood) -> int:
 
 
 def get_streak_percentile(streak: int) -> float:
+    try:
+        return int(mood_report_repository.get_percentile_for_streak(streak) * 100)
+    except PercentileMatrixNotInitializedException:
+        calculate_mood_report_percentiles()
     return int(mood_report_repository.get_percentile_for_streak(streak) * 100)
 
 

@@ -1,21 +1,25 @@
 import os
 import tempfile
+from datetime import datetime, timedelta
 import pytest
-from MoodService import app as MoonServiceFlask
+from MoodService.repositories import user as user_repository
+from MoodService.repositories import mood_report as mood_report_repository
+from MoodService.services import mood_report as mood_report_service
+from MoodService import app as MoodServiceFlask
 
 
 @pytest.fixture
 def client():
-    db_fd, MoonServiceFlask.app.config['DATABASE'] = tempfile.mkstemp()
-    MoonServiceFlask.app.config['TESTING'] = True
+    db_fd, MoodServiceFlask.app.config['DATABASE'] = tempfile.mkstemp()
+    MoodServiceFlask.app.config['TESTING'] = True
 
-    with MoonServiceFlask.app.test_client() as client:
-        with MoonServiceFlask.app.app_context():
-            MoonServiceFlask.init_db()
+    with MoodServiceFlask.app.test_client() as client:
+        with MoodServiceFlask.app.app_context():
+            MoodServiceFlask.init_db()
         yield client
 
     os.close(db_fd)
-    os.unlink(MoonServiceFlask.app.config['DATABASE'])
+    os.unlink(MoodServiceFlask.app.config['DATABASE'])
 
 
 def login(client, username, password):
@@ -53,3 +57,35 @@ def test_mood_submission_twice(client):
 
     assert result.status == "403 FORBIDDEN"
     assert result.json == 'You have already submitted a mood today'
+
+
+def test_percentile_reporting(client):
+    tired_user_id = user_repository.create_new_user("tiredUser", "hunter2")
+    mood_report_repository.historical_mood_report(tired_user_id, "tired", datetime.now().date() - timedelta(days=5))
+    mood_report_repository.historical_mood_report(tired_user_id, "really tired", datetime.now().date() - timedelta(days=4))
+    mood_report_repository.historical_mood_report(tired_user_id, "tired", datetime.now().date() - timedelta(days=3))
+    mood_report_repository.historical_mood_report(tired_user_id, "tired", datetime.now().date() - timedelta(days=2))
+    mood_report_repository.historical_mood_report(tired_user_id, "tired", datetime.now().date() - timedelta(days=1))
+    mood_report_service.create_new_mood_report(tired_user_id, "tired")
+
+    sad_user_id = user_repository.create_new_user("realSadUser", "hunter3")
+    mood_report_repository.historical_mood_report(tired_user_id, "really sad", datetime.now().date() - timedelta(days=4))
+    mood_report_repository.historical_mood_report(tired_user_id, "sad", datetime.now().date() - timedelta(days=3))
+    mood_report_repository.historical_mood_report(tired_user_id, "sad", datetime.now().date() - timedelta(days=2))
+    mood_report_repository.historical_mood_report(tired_user_id, "sad", datetime.now().date() - timedelta(days=1))
+    mood_report_service.create_new_mood_report(sad_user_id, "sad")
+
+    mood_report_service.calculate_mood_report_percentiles()
+
+    register(client, "percentileTestUser", "hunter4")
+    user = user_repository.get_user_by_id("percentileTestUser")
+    mood_report_repository.historical_mood_report(user.int_id, "happy", datetime.now().date() - timedelta(days=6))
+    mood_report_repository.historical_mood_report(user.int_id, "sad", datetime.now().date() - timedelta(days=5))
+    mood_report_repository.historical_mood_report(user.int_id, "angry", datetime.now().date() - timedelta(days=4))
+    mood_report_repository.historical_mood_report(user.int_id, "sad", datetime.now().date() - timedelta(days=3))
+    mood_report_repository.historical_mood_report(user.int_id, "happy", datetime.now().date() - timedelta(days=2))
+    mood_report_repository.historical_mood_report(user.int_id, "sad", datetime.now().date() - timedelta(days=1))
+
+    session_token = login(client, "percentileTestUser", "hunter4").json["session_token"]
+    result = submit_mood(client, session_token, "great")
+    print(result)

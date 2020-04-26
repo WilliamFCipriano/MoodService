@@ -13,8 +13,8 @@ def managed_database():
 
 def test_register_new_user(managed_database):
     user_service.register_new_user("HappyUser", "hunter2")
-    user = user_repository.get_user_by_id("HAPPYUSER")
-    assert user.username == "HAPPYUSER"
+    user = user_repository.get_user_by_id("HappyUser")
+    assert user.username == "HappyUser"
 
 
 def test_validate_user_password(managed_database):

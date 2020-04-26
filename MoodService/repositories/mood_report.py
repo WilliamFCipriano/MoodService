@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, date
 from MoodService.repositories.sqlite_util import get_connection
 from MoodService.exceptions.mood_report import MoodAlreadySubmittedException
+from MoodService.exceptions.mood_report import PercentileMatrixNotInitializedException
 
 
 def new_mood_report(user_id: int, mood: str) -> None:
@@ -83,7 +84,10 @@ def get_percentile_for_streak(streak: int) -> float:
     cur = conn.cursor()
 
     cur.execute("SELECT percentile FROM mood_percentiles WHERE streak_days = ? ORDER BY percentile desc", (streak,))
-
-    streak_percentile = cur.fetchone()[0]
+    result = cur.fetchone()
     conn.close()
-    return streak_percentile
+
+    if result is not None:
+        return result[0]
+    else:
+        raise PercentileMatrixNotInitializedException

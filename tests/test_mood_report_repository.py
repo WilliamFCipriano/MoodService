@@ -4,7 +4,7 @@ import MoodService.repositories.sqlite_util as database_util
 import MoodService.repositories.mood_report as mood_report_repository
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def managed_database():
     database_util.create_database_if_not_exists()
     yield
@@ -16,6 +16,7 @@ def test_new_mood_report(managed_database):
 
 
 def test_new_mood_report_failure(managed_database):
+    mood_report_repository.new_mood_report(1, 'happy')
+    mood_report_repository.new_mood_report(2, 'happy')
     with pytest.raises(MoodAlreadySubmittedException):
         mood_report_repository.new_mood_report(2, 'happy')
-        mood_report_repository.new_mood_report(2, 'sad')

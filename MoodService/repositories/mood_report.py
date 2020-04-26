@@ -1,9 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from MoodService.repositories.sqlite_util import get_connection
 from MoodService.exceptions.mood_report import MoodAlreadySubmittedException
 
 
-def new_mood_report(user_id, mood) -> None:
+def new_mood_report(user_id: int, mood: str) -> None:
     """saves a new mood report, if a mood report has already been
      submitted today it raises MoodAlreadySubmittedException"""
     conn = get_connection()
@@ -35,7 +35,7 @@ def new_mood_report(user_id, mood) -> None:
         raise MoodAlreadySubmittedException()
 
 
-def historical_mood_report(user_id, mood, date) -> None:
+def historical_mood_report(user_id: int, mood: str, date: date) -> None:
     """saves a historical mood report, for testing purposes does not do any sanity checks"""
     conn = get_connection()
     cur = conn.cursor()
@@ -62,3 +62,28 @@ def get_streak_eligible_user_totals() -> list:
     conn.close()
 
     return result
+
+
+def save_percentile_data(percentile_data: dict) -> None:
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM mood_percentiles")
+
+    for percentile in percentile_data:
+        cur.execute("INSERT INTO mood_percentiles (streak_days, percentile) VALUES (?,?)",
+                    (percentile_data[percentile], percentile))
+
+    conn.commit()
+    conn.close()
+
+
+def get_percentile_for_streak(streak: int) -> float:
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT percentile FROM mood_percentiles WHERE streak_days = ? ORDER BY percentile desc", (streak,))
+
+    streak_percentile = cur.fetchone()[0]
+    conn.close()
+    return streak_percentile

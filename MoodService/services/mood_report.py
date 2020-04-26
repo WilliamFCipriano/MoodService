@@ -15,6 +15,10 @@ def create_new_mood_report(user_id, mood) -> int:
     return user_repository.get_user_streak_length(user_id)
 
 
+def get_streak_percentile(streak: int) -> float:
+    return int(mood_report_repository.get_percentile_for_streak(streak) * 100)
+
+
 def calculate_mood_report_percentiles() -> dict:
     user_totals = mood_report_repository.get_streak_eligible_user_totals()
 
@@ -25,6 +29,6 @@ def calculate_mood_report_percentiles() -> dict:
         index = math.ceil(k * n)
         percentiles[n] = user_totals[index - 1][0]
 
+    mood_report_repository.save_percentile_data(percentiles)
     return percentiles
-
 

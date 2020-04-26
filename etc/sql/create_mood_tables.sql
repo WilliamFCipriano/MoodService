@@ -25,3 +25,11 @@ create table mood_report
 
 create unique index mood_report_id_uindex
 	on mood_report (id);
+
+create table mood_percentiles
+(
+	percentile float not null
+		constraint mood_percentiles_pk
+			primary key,
+	streak_days integer not null
+);

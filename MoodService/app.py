@@ -35,6 +35,15 @@ def mood():
         else:
             return jsonify("Mood submitted successfully, see you again tomorrow!")
 
+    if request.method == "GET":
+        try:
+            session = session_service.validate_token(request.form["token"])
+        except SessionNotFoundException:
+            return jsonify("You must login first to look at your previous moods"), 401
+
+        return jsonify(mood_report_service.get_mood_reports_by_id(session.user_int_id))
+
+
 
 @app.route('/login', methods=["POST"])
 def login():

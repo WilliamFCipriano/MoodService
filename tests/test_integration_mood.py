@@ -62,14 +62,14 @@ def test_mood_submission_twice(client):
 def test_percentile_reporting(client):
     tired_user_id = user_repository.create_new_user("tiredUser", "hunter2")
     mood_report_repository.historical_mood_report(tired_user_id, "tired", datetime.now().date() - timedelta(days=1), 1)
-    total1 = mood_report_service.create_new_mood_report(tired_user_id, "tired")
+    mood_report_service.create_new_mood_report(tired_user_id, "tired")
 
     sad_user_id = user_repository.create_new_user("realSadUser", "hunter3")
     mood_report_repository.historical_mood_report(sad_user_id, "really sad", datetime.now().date() - timedelta(days=4), 1)
     mood_report_repository.historical_mood_report(sad_user_id, "sad", datetime.now().date() - timedelta(days=3), 2)
     mood_report_repository.historical_mood_report(sad_user_id, "sad", datetime.now().date() - timedelta(days=2), 3)
     mood_report_repository.historical_mood_report(sad_user_id, "sad", datetime.now().date() - timedelta(days=1), 4)
-    total2 = mood_report_service.create_new_mood_report(sad_user_id, "sad")
+    mood_report_service.create_new_mood_report(sad_user_id, "sad")
 
     register(client, "percentileTestUser", "hunter4")
     user = user_repository.get_user_by_id("percentileTestUser")
@@ -86,4 +86,4 @@ def test_percentile_reporting(client):
 
     session_token = login(client, "percentileTestUser", "hunter4").json["session_token"]
     result = submit_mood(client, session_token, "great")
-    print(result)
+    assert result.data == b'"Mood submitted successfully, you are in the 99th percentile of users!"\n'

@@ -30,7 +30,7 @@ def mood():
         mood_streak_percentile = mood_report_service.get_streak_percentile(mood_streak_total)
 
         if mood_streak_percentile >= 50:
-            return jsonify("Mood submitted successfully, you are in the %s percentile of users!"
+            return jsonify("Mood submitted successfully, you are in the %sth percentile of users!"
                            % mood_streak_percentile)
         else:
             return jsonify("Mood submitted successfully, see you again tomorrow!")

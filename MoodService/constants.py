@@ -57,3 +57,16 @@ create table mood_report
 ""","""
 create unique index mood_report_id_uindex
 	on mood_report (id);"""]
+
+
+create_mood_percentile_tables = ["""
+create table mood_percentiles
+(
+	streak_days integer not null
+		constraint mood_percentiles_pk
+			primary key,
+	percentile integer not null
+);""","""
+create unique index mood_percentiles_streak_days_uindex
+	on mood_percentiles (streak_days);
+"""]

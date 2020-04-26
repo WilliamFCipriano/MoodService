@@ -1,7 +1,6 @@
-from MoodService.objects.mood_report import MoodReport
+from datetime import datetime, timedelta
 from MoodService.repositories.sqlite_util import get_connection
 from MoodService.exceptions.mood_report import MoodAlreadySubmittedException
-import datetime
 
 
 def new_mood_report(user_id, mood) -> None:
@@ -10,7 +9,7 @@ def new_mood_report(user_id, mood) -> None:
     conn = get_connection()
     cur = conn.cursor()
 
-    current_date = datetime.datetime.now().date()
+    current_date = datetime.now().date()
 
     # check to see if the user has already submitted a mood today.
     cur.execute("SELECT COUNT(*) FROM mood_report WHERE date = ? AND user_id = ?",
@@ -52,3 +51,14 @@ def historical_mood_report(user_id, mood, date) -> None:
     conn.commit()
     conn.close()
 
+
+def get_streak_eligible_user_totals() -> list:
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT streak_days FROM users WHERE last_submission >= ? ORDER BY streak_days desc",
+                (datetime.now().date() - timedelta(days=1),))
+    result = cur.fetchall()
+    conn.close()
+
+    return result

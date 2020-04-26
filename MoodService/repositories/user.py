@@ -49,5 +49,9 @@ def get_user_streak_length(user_int_id: int) -> int:
             break
         x += 1
 
+    cur.execute("UPDATE users SET streak_days = ? WHERE int_id = ?", (streak_days, user_int_id))
+    conn.commit()
+    conn.close()
+
     return streak_days
 

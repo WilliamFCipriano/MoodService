@@ -30,7 +30,6 @@ def test_get_user_streak_length(managed_database):
     user_id = user_repository.create_new_user("TESTUSER3", "PASSWORDHASH")
     mood_report_repository.new_mood_report(user_id, "happy")
     x = user_repository.get_user_streak_length(user_id)
-    y = x
 
 
 def test_get_user_streak_length_historical(managed_database):

@@ -99,4 +99,18 @@ def test_get_streak_percentile(managed_database):
     assert mood_report_service.get_streak_percentile(1) == 24
 
 
+def test_get_mood_reports_by_id(managed_database):
+    export_test_user_id = user_repository.create_new_user("exportTestUser", "hunter2")
+    mood_report_repository.historical_mood_report(export_test_user_id, "great", datetime.now().date() - timedelta(days=9), 1)
+    mood_report_repository.historical_mood_report(export_test_user_id, "ok", datetime.now().date() - timedelta(days=8), 2)
+    mood_report_repository.historical_mood_report(export_test_user_id, "ok", datetime.now().date() - timedelta(days=7), 3)
+    mood_report_repository.historical_mood_report(export_test_user_id, "ok", datetime.now().date() - timedelta(days=6), 4)
+    mood_report_repository.historical_mood_report(export_test_user_id, "ok", datetime.now().date() - timedelta(days=5), 5)
+    mood_report_repository.historical_mood_report(export_test_user_id, "ok", datetime.now().date() - timedelta(days=4), 6)
+    mood_report_repository.historical_mood_report(export_test_user_id, "ok", datetime.now().date() - timedelta(days=3), 7)
+    mood_report_repository.historical_mood_report(export_test_user_id, "ok", datetime.now().date() - timedelta(days=2), 8)
+    mood_report_repository.historical_mood_report(export_test_user_id, "ok", datetime.now().date() - timedelta(days=1), 9)
+    mood_report_service.create_new_mood_report(export_test_user_id, "fantastic")
 
+    mood_reports = mood_report_service.get_mood_reports_by_id(export_test_user_id)
+    assert len(mood_reports) == 10

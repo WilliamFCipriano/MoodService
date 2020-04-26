@@ -4,13 +4,13 @@ from MoodService.exceptions.mood_report import PercentileMatrixNotInitializedExc
 import math
 
 
-def percent_range(start,stop, step=0.01):
+def percent_range(start: float,stop: float, step=0.01):
     while start < stop:
         yield round(start, 2)
         start +=step
 
 
-def create_new_mood_report(user_id, mood) -> int:
+def create_new_mood_report(user_id: int, mood: str) -> int:
     mood_report_repository.new_mood_report(user_id, mood)
     return user_repository.get_user_streak_length(user_id)
 
@@ -35,4 +35,15 @@ def calculate_mood_report_percentiles() -> dict:
 
     mood_report_repository.save_percentile_data(percentiles)
     return percentiles
+
+
+def get_mood_reports_by_id(user_int_id: int) -> list:
+    mood_reports = mood_report_repository.get_mood_reports_by_user(user_int_id)
+
+    results = list()
+    for mood_report in mood_reports:
+        results.append(mood_report.__dict__)
+
+    return results
+
 

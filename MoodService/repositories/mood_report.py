@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, date
 from MoodService.repositories.sqlite_util import get_connection
 from MoodService.exceptions.mood_report import MoodAlreadySubmittedException
 from MoodService.exceptions.mood_report import PercentileMatrixNotInitializedException
+from MoodService.objects.mood_report import MoodReport
 
 
 def new_mood_report(user_id: int, mood: str) -> None:
@@ -93,3 +94,29 @@ def get_percentile_for_streak(streak: int) -> float:
         return result[0]
     else:
         raise PercentileMatrixNotInitializedException
+
+
+def get_mood_reports_by_user(user_int_id: int) -> list:
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM mood_report WHERE user_id = ?", (user_int_id,))
+    mood_report_result = cur.fetchall()
+
+    mood_values = dict()
+    mood_reports = list()
+
+    for mood_report in mood_report_result:
+
+        if mood_report[1] not in mood_values:
+            cur.execute("SELECT value FROM mood_values WHERE id = ?", (mood_report[1],))
+            mood_values[mood_report[1]] = cur.fetchone()[0]
+            mood_value = mood_values[mood_report[1]]
+        else:
+            mood_value = mood_values[mood_report[1]]
+
+        mood_reports.append(
+            MoodReport(mood_report[0], mood_report[1], mood_report[2], mood_report[3], mood_value)
+        )
+
+    return mood_reports

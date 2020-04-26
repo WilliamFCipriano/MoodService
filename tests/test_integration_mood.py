@@ -43,6 +43,12 @@ def submit_mood(client, token, mood):
     ), follow_redirects=True)
 
 
+def get_moods(client, token):
+    return client.get('/mood', data=dict(
+        token=token,
+    ), follow_redirects=True)
+
+
 def test_mood_submission(client):
     register(client, "happyuser", "hunter2")
     session_token = login(client, "happyuser", "hunter2").json["session_token"]
@@ -87,3 +93,22 @@ def test_percentile_reporting(client):
     session_token = login(client, "percentileTestUser", "hunter4").json["session_token"]
     result = submit_mood(client, session_token, "great")
     assert result.data == b'"Mood submitted successfully, you are in the 99th percentile of users!"\n'
+
+
+def test_mood_get(client):
+    register(client, "getTestUser", "hunter2")
+    user = user_repository.get_user_by_id("getTestUser")
+    mood_report_repository.historical_mood_report(user.int_id, "happy", datetime.now().date() - timedelta(days=3), 1)
+    mood_report_repository.historical_mood_report(user.int_id, "sad", datetime.now().date() - timedelta(days=2), 2)
+    mood_report_repository.historical_mood_report(user.int_id, "angry", datetime.now().date() - timedelta(days=1), 3)
+
+    session_token = login(client, "getTestUser", "hunter2").json["session_token"]
+    submit_mood(client, session_token, "full of joy")
+
+    result = get_moods(client, session_token)
+
+    assert len(result.json) == 4
+    assert result.json[0]['mood_value'] == 'happy'
+    assert result.json[1]['mood_value'] == 'sad'
+    assert result.json[2]['mood_value'] == 'angry'
+    assert result.json[3]['mood_value'] == 'full of joy'

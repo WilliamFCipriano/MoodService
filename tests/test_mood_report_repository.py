@@ -20,3 +20,9 @@ def test_new_mood_report_failure(managed_database):
     mood_report_repository.new_mood_report(20, 'happy')
     with pytest.raises(MoodAlreadySubmittedException):
         mood_report_repository.new_mood_report(20, 'happy')
+
+
+def test_get_mood_reports_by_user(managed_database):
+    mood_report_repository.new_mood_report(1000, 'happy')
+    reports = mood_report_repository.get_mood_reports_by_user(1000)
+    assert len(reports) == 1

@@ -1,18 +1,12 @@
-import sqlite3
-import MoodService.constants as constants
+from MoodService.repositories.sqlite_util import get_connection
 from MoodService.objects.session import Session
 from MoodService.exceptions.session import SessionNotFoundException
-
-
-def _get_connection():
-    """Returns a database connection"""
-    return sqlite3.connect(constants.database_location)
 
 
 def get_session_by_token(token: str) -> Session:
     """Returns a session objects for any given token, raises
     SessionNotFoundException when the session does not exist"""
-    conn = _get_connection()
+    conn = get_connection()
     cur = conn.cursor()
 
     cur.execute("SELECT * FROM sessions WHERE token = ?", (token,))
@@ -27,7 +21,7 @@ def get_session_by_token(token: str) -> Session:
 
 def create_session(user_int_id: int, token: str) -> Session:
     """Creates a session for a given user_int_id and returns it"""
-    conn = _get_connection()
+    conn = get_connection()
     cur = conn.cursor()
     cur.execute("INSERT INTO sessions (user_int_id, token) VALUES (?, ?)",
                 (user_int_id, token))

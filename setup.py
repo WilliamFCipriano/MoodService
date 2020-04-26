@@ -7,4 +7,4 @@ setup(name='MoodService',
       author_email='will@willcipriano.com',
       packages=['MoodService', 'MoodService.objects', 'MoodService.repositories',
                 'MoodService.services', 'MoodService.exceptions'],
-      install_requires=['flask', 'bcrypt', 'APScheduler'])
+      install_requires=['flask', 'bcrypt', 'apscheduler'])

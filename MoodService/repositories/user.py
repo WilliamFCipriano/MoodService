@@ -1,3 +1,4 @@
+from datetime import datetime
 from MoodService.repositories.sqlite_util import get_connection
 from MoodService.objects.user import User
 database_created = False
@@ -14,7 +15,7 @@ def get_user_by_id(user_name: str) -> User:
     conn.close()
 
     if result is not None:
-        return User(result[0], result[1], result[2])
+        return User(result[0], result[1], result[2], result[3], result[4])
 
 
 def create_new_user(user_name: str, password_hash: str) -> int:
@@ -28,3 +29,19 @@ def create_new_user(user_name: str, password_hash: str) -> int:
     conn.close()
 
     return cur.lastrowid
+
+
+def get_user_streak_length(user_int_id: int) -> int:
+    """Calculates the current users streak in days"""
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT date FROM mood_report where user_id = ? ORDER BY date desc", (user_int_id,))
+    dates = cur.fetchall()
+
+    streak_days = 0
+
+    if dates[0][0] == datetime.now().date():
+        return 1
+    else:
+        return 0

@@ -1,4 +1,5 @@
 from MoodService.repositories import user as user_repository
+from MoodService.repositories import mood_report as mood_report_repository
 import pytest
 import MoodService.repositories.sqlite_util as database_util
 
@@ -24,3 +25,8 @@ def test_lookup_user(managed_database):
     assert user.int_id == new_user_id
 
 
+def test_get_user_streak_length(managed_database):
+    user_id = user_repository.create_new_user("TESTUSER3", "PASSWORDHASH")
+    mood_report_repository.new_mood_report(user_id, "happy")
+    x = user_repository.get_user_streak_length(user_id)
+    y = x

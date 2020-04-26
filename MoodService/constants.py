@@ -1,4 +1,5 @@
 database_location = 'moodService.db'
+log_location = 'moodService.log'
 
 create_user_table = ["""
 create table users

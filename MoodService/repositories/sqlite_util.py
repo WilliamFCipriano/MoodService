@@ -23,6 +23,9 @@ def create_database_if_not_exists() -> None:
     for statement in constants.create_session_table:
         cur.execute(statement)
 
+    for statement in constants.create_mood_tables:
+        cur.execute(statement)
+
     conn.commit()
     conn.close()
 

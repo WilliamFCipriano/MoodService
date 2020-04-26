@@ -20,7 +20,7 @@ create table mood_report
 			primary key autoincrement,
 	mood_value_id integer not null,
 	user_id integer not null,
-	date integer not null
+	date date not null
 );
 
 create unique index mood_report_id_uindex

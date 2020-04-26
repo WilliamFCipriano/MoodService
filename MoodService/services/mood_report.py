@@ -9,14 +9,15 @@ log = audit.get_logger('mood_report')
 
 
 def _percent_range(start: float,stop: float, step=0.01) -> collections.Iterable:
-    """produces a iterator that goes from 0.01 to 0.99"""
+    """produces an iterator that goes from 0.01 to 0.99"""
     while start < stop:
         yield round(start, 2)
         start += step
 
 
 def create_new_mood_report(user_int_id: int, mood: str) -> int:
-    """creates a mood report for the current day"""
+    """creates a mood report for the current day, then returns the
+    users current streak length"""
     log.info("Generating mood report for user: %s", user_int_id)
     mood_report_repository.new_mood_report(user_int_id, mood)
     return user_repository.get_user_streak_length(user_int_id)
@@ -34,7 +35,7 @@ def get_streak_percentile(streak: int) -> int:
 
 def calculate_mood_report_percentiles() -> dict:
     """calculates the percentile of every user currently on a streak,
-    then saves that result to the database for later use"""
+    then saves that result to the database, returns output as a dictionary"""
     log.info("Calculating mood report percentiles")
     user_totals = mood_report_repository.get_streak_eligible_user_totals()
 

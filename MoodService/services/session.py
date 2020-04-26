@@ -7,12 +7,12 @@ log = audit.get_logger('session')
 
 
 def _generate_session_token() -> str:
-    """Returns a urlsafe token 64 characters long"""
+    """Returns a token 64 characters long for the purposes of authenticating sessions"""
     return secrets.token_urlsafe(64)
 
 
 def create_session(user_int_id: int) -> Session:
-    """Creates a new session in the database for future use"""
+    """Creates a new session in the database for future use, returning a session object"""
     log.info("Creating session for user: %s", user_int_id)
     return session_repository.create_session(user_int_id, _generate_session_token())
 

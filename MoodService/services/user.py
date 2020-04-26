@@ -8,7 +8,7 @@ log = audit.get_logger('user')
 
 
 def register_new_user(username: str, password: str) -> None:
-    """create new user in the database"""
+    """Creates a new user in the database"""
     log.info("Registering new user: %s", username)
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode('utf8'), salt)
@@ -16,7 +16,7 @@ def register_new_user(username: str, password: str) -> None:
 
 
 def validate_user_password(username: str, password: str) -> User:
-    """confirm that the users password is correct"""
+    """Confirms that the users password is correct, returns the users object"""
     log.info("Checking password of user: %s", username)
     user = user_repository.get_user_by_id(username)
 

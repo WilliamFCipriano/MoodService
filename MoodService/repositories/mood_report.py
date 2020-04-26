@@ -36,7 +36,7 @@ def new_mood_report(user_id: int, mood: str) -> None:
         raise MoodAlreadySubmittedException()
 
 
-def historical_mood_report(user_id: int, mood: str, date: date) -> None:
+def historical_mood_report(user_id: int, mood: str, date: date, streak: int) -> None:
     """saves a historical mood report, for testing purposes does not do any sanity checks"""
     conn = get_connection()
     cur = conn.cursor()
@@ -48,6 +48,8 @@ def historical_mood_report(user_id: int, mood: str, date: date) -> None:
 
     cur.execute("INSERT INTO mood_report (mood_value_id, user_id, date) VALUES (?,?,?)",
                     (mood_value_id, user_id, date))
+
+    cur.execute("UPDATE users SET last_submission = ? AND streak_days = ? WHERE int_id = ?", (date, streak, user_id))
 
     conn.commit()
     conn.close()

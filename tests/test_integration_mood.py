@@ -61,30 +61,28 @@ def test_mood_submission_twice(client):
 
 def test_percentile_reporting(client):
     tired_user_id = user_repository.create_new_user("tiredUser", "hunter2")
-    mood_report_repository.historical_mood_report(tired_user_id, "tired", datetime.now().date() - timedelta(days=5))
-    mood_report_repository.historical_mood_report(tired_user_id, "really tired", datetime.now().date() - timedelta(days=4))
-    mood_report_repository.historical_mood_report(tired_user_id, "tired", datetime.now().date() - timedelta(days=3))
-    mood_report_repository.historical_mood_report(tired_user_id, "tired", datetime.now().date() - timedelta(days=2))
-    mood_report_repository.historical_mood_report(tired_user_id, "tired", datetime.now().date() - timedelta(days=1))
-    mood_report_service.create_new_mood_report(tired_user_id, "tired")
+    mood_report_repository.historical_mood_report(tired_user_id, "tired", datetime.now().date() - timedelta(days=1), 1)
+    total1 = mood_report_service.create_new_mood_report(tired_user_id, "tired")
 
     sad_user_id = user_repository.create_new_user("realSadUser", "hunter3")
-    mood_report_repository.historical_mood_report(tired_user_id, "really sad", datetime.now().date() - timedelta(days=4))
-    mood_report_repository.historical_mood_report(tired_user_id, "sad", datetime.now().date() - timedelta(days=3))
-    mood_report_repository.historical_mood_report(tired_user_id, "sad", datetime.now().date() - timedelta(days=2))
-    mood_report_repository.historical_mood_report(tired_user_id, "sad", datetime.now().date() - timedelta(days=1))
-    mood_report_service.create_new_mood_report(sad_user_id, "sad")
-
-    mood_report_service.calculate_mood_report_percentiles()
+    mood_report_repository.historical_mood_report(sad_user_id, "really sad", datetime.now().date() - timedelta(days=4), 1)
+    mood_report_repository.historical_mood_report(sad_user_id, "sad", datetime.now().date() - timedelta(days=3), 2)
+    mood_report_repository.historical_mood_report(sad_user_id, "sad", datetime.now().date() - timedelta(days=2), 3)
+    mood_report_repository.historical_mood_report(sad_user_id, "sad", datetime.now().date() - timedelta(days=1), 4)
+    total2 = mood_report_service.create_new_mood_report(sad_user_id, "sad")
 
     register(client, "percentileTestUser", "hunter4")
     user = user_repository.get_user_by_id("percentileTestUser")
-    mood_report_repository.historical_mood_report(user.int_id, "happy", datetime.now().date() - timedelta(days=6))
-    mood_report_repository.historical_mood_report(user.int_id, "sad", datetime.now().date() - timedelta(days=5))
-    mood_report_repository.historical_mood_report(user.int_id, "angry", datetime.now().date() - timedelta(days=4))
-    mood_report_repository.historical_mood_report(user.int_id, "sad", datetime.now().date() - timedelta(days=3))
-    mood_report_repository.historical_mood_report(user.int_id, "happy", datetime.now().date() - timedelta(days=2))
-    mood_report_repository.historical_mood_report(user.int_id, "sad", datetime.now().date() - timedelta(days=1))
+    mood_report_repository.historical_mood_report(user.int_id, "happy", datetime.now().date() - timedelta(days=8), 1)
+    mood_report_repository.historical_mood_report(user.int_id, "happy", datetime.now().date() - timedelta(days=7), 2)
+    mood_report_repository.historical_mood_report(user.int_id, "happy", datetime.now().date() - timedelta(days=6), 3)
+    mood_report_repository.historical_mood_report(user.int_id, "sad", datetime.now().date() - timedelta(days=5), 4)
+    mood_report_repository.historical_mood_report(user.int_id, "angry", datetime.now().date() - timedelta(days=4), 5)
+    mood_report_repository.historical_mood_report(user.int_id, "sad", datetime.now().date() - timedelta(days=3), 6)
+    mood_report_repository.historical_mood_report(user.int_id, "happy", datetime.now().date() - timedelta(days=2), 7)
+    mood_report_repository.historical_mood_report(user.int_id, "sad", datetime.now().date() - timedelta(days=1), 8)
+
+    mood_report_service.calculate_mood_report_percentiles()
 
     session_token = login(client, "percentileTestUser", "hunter4").json["session_token"]
     result = submit_mood(client, session_token, "great")

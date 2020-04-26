@@ -10,9 +10,12 @@ login = Blueprint('login', __name__)
 
 @login.route('/login', methods=["POST"])
 def post():
+    """This endpoint returns a jsonified Session object when you provide it
+    when a valid username and password"""
     try:
         user = user_service.validate_user_password(request.form["username"], request.form["password"])
-        session = session_service.create_session(user.int_id)
     except UserPasswordValidationException:
         return jsonify("Unable to validate credentials")
+
+    session = session_service.create_session(user.int_id)
     return jsonify(session.__dict__)

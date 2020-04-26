@@ -10,6 +10,7 @@ register = Blueprint('register', __name__)
 
 @register.route('/register', methods=["POST"])
 def post():
+    """This endpoint allows a user to register a new account"""
     try:
         user_service.register_new_user(request.form["username"], request.form["password"])
     except UsernameAlreadyInUseException:

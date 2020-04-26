@@ -11,6 +11,7 @@ mood = Blueprint('mood', __name__)
 
 @mood.route('/mood', methods=["POST"])
 def post():
+    """This endpoint allows logged in users to submit a mood each day"""
 
     try:
         session = session_service.validate_token(request.form["token"])
@@ -33,6 +34,7 @@ def post():
 
 @mood.route('/mood', methods=["GET"])
 def get():
+    """This endpoint allows logged in users to retrieve previous moods"""
     try:
         session = session_service.validate_token(request.form["token"])
     except SessionNotFoundException:

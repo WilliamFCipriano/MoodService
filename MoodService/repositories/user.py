@@ -54,4 +54,3 @@ def get_user_streak_length(user_int_id: int) -> int:
     conn.close()
 
     return streak_days
-

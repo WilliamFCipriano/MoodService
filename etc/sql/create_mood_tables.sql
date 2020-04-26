@@ -1,16 +1,16 @@
-create table mood_values
+create table mood_value
 (
 	id interger not null
-		constraint mood_values_pk
+		constraint mood_value_pk
 			primary key autoincrement,
 	value string not null
 );
 
-create unique index mood_values_id_uindex
-	on mood_values (id);
+create unique index mood_value_id_uindex
+	on mood_value (id);
 
-create unique index mood_values_value_uindex
-	on mood_values (value);
+create unique index mood_value_value_uindex
+	on mood_value (value);
 
 
 create table mood_report

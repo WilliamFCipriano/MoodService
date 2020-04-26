@@ -1,5 +1,5 @@
 class User:
-    """Represents a single MoodService user."""
+    """Represents a single MoodService user"""
 
     def __init__(self, int_id, username, password, last_submission, streak_days):
         self.int_id = int_id

@@ -1,5 +1,6 @@
 MANIFEST
 moodService.db
+moodService.log
 .tox
 .mypy_cache
 .idea

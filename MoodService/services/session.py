@@ -7,7 +7,7 @@ log = audit.get_logger('session')
 
 
 def _generate_session_token() -> str:
-    "Returns a urlsafe token 32 characters long"
+    """Returns a urlsafe token 64 characters long"""
     return secrets.token_urlsafe(64)
 
 

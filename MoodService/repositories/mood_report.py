@@ -12,9 +12,10 @@ def new_mood_report(user_id, mood) -> None:
 
     # check to see if the user has already submitted a mood today.
     cur.execute("SELECT * FROM mood_report WHERE date = ? AND user_id = ?",
-                (datetime.datetime.now(), user_id))
+                (datetime.datetime.now().date(), user_id))
+    prev_moods = cur.fetchall()
 
-    if len(cur.fetchall()) == 0:
+    if not prev_moods.__len__() >= 1:
         # deduplication of mood values, unique index prevents duplicates
         cur.execute("INSERT OR IGNORE INTO mood_values (value) VALUES (?)", (mood,))
 
@@ -27,11 +28,10 @@ def new_mood_report(user_id, mood) -> None:
                     (datetime.datetime.now(), user_id))
 
         cur.execute("INSERT INTO mood_report (mood_value_id, user_id, date) VALUES (?,?,?)",
-                        (mood_value_id, user_id, datetime.datetime.now()))
+                        (mood_value_id, user_id, datetime.datetime.now().date()))
 
         conn.commit()
         conn.close()
     else:
-        conn.commit()
         conn.close()
         raise MoodAlreadySubmittedException()

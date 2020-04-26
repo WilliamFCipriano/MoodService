@@ -4,6 +4,11 @@ import os
 import MoodService.constants as constants
 
 
+def get_connection():
+    """Returns a database connection"""
+    return sqlite3.connect(constants.database_location)
+
+
 def _database_exists() -> bool:
     """checks to see if a file exists at a certain path"""
     return path.exists(constants.database_location)

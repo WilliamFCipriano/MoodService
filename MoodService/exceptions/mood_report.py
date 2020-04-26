@@ -9,3 +9,9 @@ class MoodAlreadySubmittedException(MoodServiceException):
 class PercentileMatrixNotInitializedException(MoodServiceException):
     """Raised when the percentile matrix has not yet been calculated"""
     pass
+
+
+class NoPreviousMoodFoundException(MoodServiceException):
+    """Raised when trying to edit a mood that does not exist"""
+    pass
+

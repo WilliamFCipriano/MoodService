@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from apscheduler.schedulers.background import BackgroundScheduler
 import MoodService.repositories.sqlite_util as database_util
 from MoodService.services import mood_report as mood_report_service
@@ -14,7 +14,14 @@ app.register_blueprint(register)
 
 
 def update_percentiles():
+    """Updates the precalculated percentiles and stores them
+    in the database, runs every 15 minutes"""
     mood_report_service.calculate_mood_report_percentiles()
+
+
+@app.route("/")
+def root():
+    return send_from_directory('static', 'index.html')
 
 
 if __name__ == '__main__':

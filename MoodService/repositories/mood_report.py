@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta, date
+from sqlite3 import Error as sqliteError
 from MoodService.repositories.sqlite_util import get_connection
 from MoodService.exceptions.mood_report import MoodAlreadySubmittedException
 from MoodService.exceptions.mood_report import PercentileMatrixNotInitializedException
+from MoodService.exceptions.mood_report import NoPreviousMoodFoundException
 from MoodService.objects.mood_report import MoodReport
 
 
@@ -126,3 +128,20 @@ def get_mood_reports_by_user(user_int_id: int) -> list:
         )
 
     return mood_reports
+
+
+def update_mood_report_by_user(user_int_id: int, mood: str) -> None:
+    """Updates a previously recorded mood in the database"""
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("INSERT OR IGNORE INTO mood_value (value) VALUES (?)", (mood,))
+    cur.execute("SELECT id FROM mood_value WHERE value = ?", (mood,))
+    mood_value_id = cur.fetchone()[0]
+
+    try:
+        cur.execute("UPDATE mood_report SET mood_value_id = ? WHERE user_id = ? AND date = ?",
+                    (mood_value_id, user_int_id, datetime.now().date()))
+    except sqliteError:
+        raise NoPreviousMoodFoundException()
+

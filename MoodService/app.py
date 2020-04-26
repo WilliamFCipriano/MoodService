@@ -3,6 +3,7 @@ from flask import request
 from flask import jsonify
 import MoodService.repositories.sqlite_util as database_util
 from sqlite3 import Error as sqliteError
+from apscheduler.schedulers.background import BackgroundScheduler
 from MoodService.services import user as user_service
 from MoodService.services import session as session_service
 from MoodService.services import mood_report as mood_report_service
@@ -11,6 +12,10 @@ from MoodService.exceptions.session import SessionNotFoundException
 from MoodService.exceptions.mood_report import MoodAlreadySubmittedException
 
 app = Flask(__name__)
+
+
+def update_percentiles():
+    mood_report_service.calculate_mood_report_percentiles()
 
 
 @app.route('/mood', methods=["GET", "POST"])
@@ -44,7 +49,6 @@ def mood():
         return jsonify(mood_report_service.get_mood_reports_by_id(session.user_int_id))
 
 
-
 @app.route('/login', methods=["POST"])
 def login():
     try:
@@ -65,6 +69,10 @@ def register():
 
 
 if __name__ == '__main__':
+    update_percentiles()
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(update_percentiles, 'interval', minutes=15)
+    scheduler.start()
     app.run(host='0.0.0.0')
 
 

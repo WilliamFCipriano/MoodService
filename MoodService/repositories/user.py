@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from MoodService.repositories.sqlite_util import get_connection
 from MoodService.objects.user import User
 database_created = False
@@ -40,8 +40,14 @@ def get_user_streak_length(user_int_id: int) -> int:
     dates = cur.fetchall()
 
     streak_days = 0
+    x = 0
 
-    if dates[0][0] == datetime.now().date():
-        return 1
-    else:
-        return 0
+    for date in dates:
+        if date[0] == str(datetime.now().date() - timedelta(days=x)):
+            streak_days += 1
+        else:
+            break
+        x += 1
+
+    return streak_days
+

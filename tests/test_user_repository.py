@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from MoodService.repositories import user as user_repository
 from MoodService.repositories import mood_report as mood_report_repository
 import pytest
@@ -30,3 +31,13 @@ def test_get_user_streak_length(managed_database):
     mood_report_repository.new_mood_report(user_id, "happy")
     x = user_repository.get_user_streak_length(user_id)
     y = x
+
+
+def test_get_user_streak_length_historical(managed_database):
+    user_id = user_repository.create_new_user("TESTUSER4", "PASSWORDHASH")
+    mood_report_repository.new_mood_report(user_id, "happy")
+    mood_report_repository.historical_mood_report(user_id, "ok", datetime.now().date() - timedelta(days=1))
+    mood_report_repository.historical_mood_report(user_id, "fine", datetime.now().date() - timedelta(days=2))
+    mood_report_repository.historical_mood_report(user_id, "great", datetime.now().date() - timedelta(days=3))
+    x = user_repository.get_user_streak_length(user_id)
+    assert x == 4

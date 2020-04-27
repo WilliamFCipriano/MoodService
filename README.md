@@ -17,7 +17,7 @@ tox
 ```
 
 ## Running the app locally
-Install via setup.py and then run as you would any other flask app:
+Install via setup.py and then run as you would any other flask app. Requires Python 3.7:
 ```
 pip install .
 python MoodService/app.py

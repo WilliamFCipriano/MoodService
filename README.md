@@ -52,5 +52,10 @@ Allows the user to get all previous moods they have set
 Allows the user to update their current mood
 ```
 
+## Insomnia
+
+A Insomnia configuration file is provided in /etc
+
+
 ## Issues
 As this is a toy example, a few corners were cut for the sake of time. I have created a number of issue tickets that describe what would be required to bring this toy example into a production environment.

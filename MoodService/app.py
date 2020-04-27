@@ -25,7 +25,6 @@ def root():
 
 
 if __name__ == '__main__':
-    update_percentiles()
     scheduler = BackgroundScheduler()
     scheduler.add_job(update_percentiles, 'interval', minutes=15)
     scheduler.start()

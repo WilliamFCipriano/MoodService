@@ -142,6 +142,9 @@ def update_mood_report_by_user(user_int_id: int, mood: str) -> None:
     try:
         cur.execute("UPDATE mood_report SET mood_value_id = ? WHERE user_id = ? AND date = ?",
                     (mood_value_id, user_int_id, datetime.now().date()))
+        conn.commit()
+        conn.close()
     except sqliteError:
+        conn.close()
         raise NoPreviousMoodFoundException()
 

@@ -31,23 +31,23 @@ docker run -d -p 5000:5000 mood_service
 
 ## API
 ```
-\register (POST)
+/register (POST)
 - requires form parameters 'username' and 'password'
 Allows a user to create an account
 
-\login (POST)
+/login (POST)
 - requires form parameters 'username' and 'password'
 Allows a user to login, returns a session token to be used later
 
-\mood (POST)
+/mood (POST)
 - requires form parameters 'token' and 'mood'
 Allows the user to set their daily mood, returns the percentile they are in if it's over 50%
 
-\mood (GET)
+/mood (GET)
 - requires form parameter 'token'
 Allows the user to get all previous moods they have set
 
-\mood (PATCH)
+/mood (PATCH)
 - requires form parameters 'token' and 'mood'
 Allows the user to update their current mood
 ```
@@ -59,3 +59,7 @@ A Insomnia configuration file is provided in /etc
 
 ## Issues
 As this is a toy example, a few corners were cut for the sake of time. I have created a number of issue tickets that describe what would be required to bring this toy example into a production environment.
+
+## Commits
+
+As this was completed for a assessment I made some major commits every epoch or so, but also left all the branches dangling if a higher resolution view is required.

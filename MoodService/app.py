@@ -26,7 +26,7 @@ def root():
 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
-    scheduler.add_job(update_percentiles, 'interval', minutes=15)
+    scheduler.add_job(update_percentiles, 'interval', hours=1)
     scheduler.start()
     app.run(host='0.0.0.0')
 

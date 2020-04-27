@@ -66,4 +66,3 @@ def update_mood_report(user_int_id: int, mood: str):
     """Updates a previously recorded mood"""
     log.info("Updating mood for user: %s", user_int_id)
     mood_report_repository.update_mood_report_by_user(user_int_id, mood)
-

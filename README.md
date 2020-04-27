@@ -63,3 +63,7 @@ As this is a toy example, a few corners were cut for the sake of time. I have cr
 ## Commits
 
 As this was completed for a assessment I made some major commits every epoch or so, but also left all the branches dangling if a higher resolution view is required.
+
+## Databases / Database Schemas
+
+You can find a blank database in /etc/databases, also the schema is located in /etc/sql

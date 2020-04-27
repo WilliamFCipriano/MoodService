@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
+from sqlite3 import Error as sqliteError
+from MoodService.exceptions.user import UsernameAlreadyInUseException
 from MoodService.repositories.sqlite_util import get_connection
 from MoodService.objects.user import User
-database_created = False
 
 
 def get_user_by_id(user_name: str) -> User:
@@ -23,8 +24,13 @@ def create_new_user(user_name: str, password_hash: str) -> int:
     conn = get_connection()
     cur = conn.cursor()
 
-    cur.execute("INSERT INTO users (user_name, password_hash) VALUES (?,?)",
-                (user_name, password_hash))
+    try:
+        cur.execute("INSERT INTO users (user_name, password_hash) VALUES (?,?)",
+                    (user_name, password_hash))
+    except sqliteError:
+        conn.close()
+        raise UsernameAlreadyInUseException("The username selected is already in use")
+
     conn.commit()
     conn.close()
 
@@ -54,4 +60,3 @@ def get_user_streak_length(user_int_id: int) -> int:
     conn.close()
 
     return streak_days
-

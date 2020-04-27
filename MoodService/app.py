@@ -1,75 +1,30 @@
-from flask import Flask
-from flask import request
-from flask import jsonify
-import MoodService.repositories.sqlite_util as database_util
-from sqlite3 import Error as sqliteError
+from flask import Flask, send_from_directory
 from apscheduler.schedulers.background import BackgroundScheduler
-from MoodService.services import user as user_service
-from MoodService.services import session as session_service
+import MoodService.repositories.sqlite_util as database_util
 from MoodService.services import mood_report as mood_report_service
-from MoodService.exceptions.user import UserPasswordValidationException
-from MoodService.exceptions.session import SessionNotFoundException
-from MoodService.exceptions.mood_report import MoodAlreadySubmittedException
+from MoodService.mood import mood
+from MoodService.login import login
+from MoodService.register import register
 
 app = Flask(__name__)
 
+app.register_blueprint(mood)
+app.register_blueprint(login)
+app.register_blueprint(register)
+
 
 def update_percentiles():
+    """Updates the precalculated percentiles and stores them
+    in the database, runs every 15 minutes"""
     mood_report_service.calculate_mood_report_percentiles()
 
 
-@app.route('/mood', methods=["GET", "POST"])
-def mood():
-
-    if request.method == "POST":
-        try:
-            session = session_service.validate_token(request.form["token"])
-        except SessionNotFoundException:
-            return jsonify("You must login first to submit your mood"), 401
-
-        try:
-            mood_streak_total = mood_report_service.create_new_mood_report(session.user_int_id, request.form["mood"])
-        except MoodAlreadySubmittedException:
-            return jsonify("You have already submitted a mood today"), 403
-
-        mood_streak_percentile = mood_report_service.get_streak_percentile(mood_streak_total)
-
-        if mood_streak_percentile >= 50:
-            return jsonify("Mood submitted successfully, you are in the %sth percentile of users!"
-                           % mood_streak_percentile)
-        else:
-            return jsonify("Mood submitted successfully, see you again tomorrow!")
-
-    if request.method == "GET":
-        try:
-            session = session_service.validate_token(request.form["token"])
-        except SessionNotFoundException:
-            return jsonify("You must login first to look at your previous moods"), 401
-
-        return jsonify(mood_report_service.get_mood_reports_by_id(session.user_int_id))
-
-
-@app.route('/login', methods=["POST"])
-def login():
-    try:
-        user = user_service.validate_user_password(request.form["username"], request.form["password"])
-        session = session_service.create_session(user.int_id)
-    except UserPasswordValidationException:
-        return jsonify("Unable to validate credentials")
-    return jsonify(session.__dict__)
-
-
-@app.route('/register', methods=["POST"])
-def register():
-    try:
-        user_service.register_new_user(request.form["username"], request.form["password"])
-    except sqliteError:
-        return jsonify("This username has already been reserved, please choose another.")
-    return jsonify("User %s has been registered successfully" % request.form["username"])
+@app.route("/")
+def root():
+    return send_from_directory('static', 'index.html')
 
 
 if __name__ == '__main__':
-    update_percentiles()
     scheduler = BackgroundScheduler()
     scheduler.add_job(update_percentiles, 'interval', minutes=15)
     scheduler.start()

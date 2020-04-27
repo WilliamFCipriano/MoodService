@@ -62,7 +62,7 @@ def test_mood_submission_twice(client):
     result = submit_mood(client, session_token, "sadder")
 
     assert result.status == "403 FORBIDDEN"
-    assert result.json == 'You have already submitted a mood today'
+    assert result.json == 'You have already submitted a mood today.'
 
 
 def test_percentile_reporting(client):

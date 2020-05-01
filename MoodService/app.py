@@ -15,7 +15,7 @@ app.register_blueprint(register)
 
 def update_percentiles():
     """Updates the precalculated percentiles and stores them
-    in the database, runs every 15 minutes"""
+    in the database, runs every hour"""
     mood_report_service.calculate_mood_report_percentiles()
 
 
